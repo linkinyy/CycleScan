@@ -1,0 +1,51 @@
+# Compiled Object files, Static and Dynamic libs (Shared Objects)
+*.o
+*.a
+*.so
+
+# Folders
+_obj
+_test
+vendor
+node_modules
+
+# Go specific
+*.exe
+*.exe~
+*.dll
+*.dylib
+*.test
+*.out
+*.prof
+*.tar.gz
+
+# GoBinaries
+bin/
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+
+# Local Env files
+.env
+
+# JetBrains IDEs
+.idea/
+
+# Logs
+logs
+*.log
+*.log.*
+
+# Temp files
+*.tmp
+*.swp
+*.bak
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+
+# vim files
+*.vimrc
