@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"github.com/linkinyy/CycleScan/pkg/logger"
+)
 
 func main() {
-	fmt.Println("Hello CycleScan")
+	logger.Info("Hello CycleScan")
 }
