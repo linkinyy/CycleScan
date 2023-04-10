@@ -12,13 +12,22 @@ type LogOption struct {
 	JsonLog bool
 }
 
+type TargetOption struct {
+	Ip     string
+	Ports  cli.StringSlice
+	OsScan bool
+}
+
 type Options struct {
 	LogOption
+	TargetOption
 }
 
 var Option = &Options{}
+
 var (
-	LogCategory = "Log Config"
+	LogCategory    = "Log Config"
+	TargetCategory = "Target Config"
 )
 
 func init() {
@@ -51,6 +60,26 @@ func init() {
 			Value:       false,
 			Destination: &Option.JsonLog,
 		},
+		&cli.StringFlag{
+			Name:        "ip",
+			Usage:       "Target Ip",
+			Required:    true,
+			Category:    TargetCategory,
+			Destination: &Option.Ip,
+		},
+		&cli.StringSliceFlag{
+			Name:        "ports",
+			Usage:       "Target Ports",
+			Category:    TargetCategory,
+			Destination: &Option.Ports,
+		},
+		&cli.BoolFlag{
+			Name:        "os",
+			Usage:       "Os Scan Guess",
+			Value:       false,
+			Category:    TargetCategory,
+			Destination: &Option.OsScan,
+		},
 	}
 
 	app.Action = func(c *cli.Context) error {
@@ -58,7 +87,7 @@ func init() {
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		_ = fmt.Errorf("options err :%s", err)
+		fmt.Println("App Error: ", err)
 		os.Exit(-1)
 	}
 }
