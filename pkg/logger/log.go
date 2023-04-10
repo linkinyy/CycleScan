@@ -2,6 +2,7 @@ package logger
 
 import (
 	"fmt"
+	"github.com/linkinyy/CycleScan/pkg/types"
 	"github.com/linkinyy/CycleScan/pkg/utils"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -11,18 +12,29 @@ import (
 
 var logger *zap.SugaredLogger
 
-func init() {
+func InitLog() {
 	encoderConfig := zap.NewProductionEncoderConfig()
 	// 修改时间编码器
 	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	// 日志级别使用大写
 	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
-	encoder := zapcore.NewConsoleEncoder(encoderConfig)
-
-	core := zapcore.NewTee(
-		zapcore.NewCore(encoder, zapcore.AddSync(os.Stdout), zapcore.DebugLevel),
-		zapcore.NewCore(encoder, zapcore.AddSync(fileWriteSyncer()), zapcore.DebugLevel),
-	)
+	var encoder zapcore.Encoder
+	// 日志格式
+	if types.Option.JsonLog {
+		encoder = zapcore.NewJSONEncoder(encoderConfig)
+	} else {
+		encoder = zapcore.NewConsoleEncoder(encoderConfig)
+	}
+	var cores []zapcore.Core
+	// 是否打印日志
+	if !types.Option.NoLog {
+		cores = append(cores, zapcore.NewCore(encoder, zapcore.AddSync(os.Stdout), zapcore.DebugLevel))
+	}
+	// 是否记录文件
+	if types.Option.Record {
+		cores = append(cores, zapcore.NewCore(encoder, zapcore.AddSync(fileWriteSyncer()), zapcore.DebugLevel))
+	}
+	core := zapcore.NewTee(cores...)
 	// zap.AddCaller 添加函数调用信息
 	logger = zap.New(core, zap.AddCaller()).Sugar()
 }
