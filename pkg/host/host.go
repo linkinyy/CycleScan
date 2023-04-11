@@ -4,6 +4,7 @@ import (
 	"github.com/Ullaakut/nmap/v2"
 	"github.com/linkinyy/CycleScan/pkg/logger"
 	"github.com/linkinyy/CycleScan/pkg/types"
+	"os"
 )
 
 type Target struct {
@@ -30,7 +31,8 @@ func (t *Target) Scan() {
 	} else if t.Ip != "" {
 		t.ScanWithNmap()
 	} else {
-
+		// 解决help, version不退出问题
+		os.Exit(0)
 	}
 }
 
