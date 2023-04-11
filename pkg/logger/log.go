@@ -36,7 +36,8 @@ func InitLog() {
 	}
 	core := zapcore.NewTee(cores...)
 	// zap.AddCaller 添加函数调用信息
-	logger = zap.New(core, zap.AddCaller()).Sugar()
+	// zap.AddCallerSkip 显示具体调用行数
+	logger = zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1)).Sugar()
 }
 
 func fileWriteSyncer() zapcore.WriteSyncer {
