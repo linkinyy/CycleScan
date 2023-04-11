@@ -3,6 +3,7 @@ package host
 import (
 	"github.com/Ullaakut/nmap/v2"
 	"github.com/linkinyy/CycleScan/pkg/logger"
+	"github.com/linkinyy/CycleScan/pkg/types"
 )
 
 type Target struct {
@@ -23,23 +24,39 @@ type Port struct {
 	ExtraInfo string
 }
 
-func (t *Target) Scan(ports []string) {
-	t.ScanWithNmap(ports)
+func (t *Target) Scan() {
+	if t.Url != "" {
+
+	} else if t.Ip != "" {
+		t.ScanWithNmap()
+	} else {
+
+	}
 }
 
-func (t *Target) ScanWithNmap(ports []string) {
+func (t *Target) ScanWithNmap() {
 	options := []nmap.Option{
 		nmap.WithTargets(t.Ip),
 		nmap.WithDisabledDNSResolution(),
 		nmap.WithReason(),
-		nmap.WithServiceInfo(),
-		nmap.WithScripts("smb-os-discovery"),
-		nmap.WithOSScanGuess(),
-		nmap.WithOSDetection(),
 	}
-	if ports != nil {
+
+	if ports := types.Option.Ports.Value(); ports != nil {
 		options = append(options, nmap.WithPorts(ports...))
 	}
+
+	if types.Option.OsScan == true {
+		options = append(options,
+			nmap.WithScripts("smb-os-discovery"),
+			nmap.WithOSScanGuess(),
+			nmap.WithOSDetection(),
+		)
+	}
+
+	if types.Option.ServiceVersion == true {
+		options = append(options, nmap.WithServiceInfo())
+	}
+
 	scanner, err := nmap.NewScanner(options...)
 	if err != nil {
 		logger.Error(err)

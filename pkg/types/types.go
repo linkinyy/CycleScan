@@ -13,9 +13,11 @@ type LogOption struct {
 }
 
 type TargetOption struct {
-	Ip     string
-	Ports  cli.StringSlice
-	OsScan bool
+	Ip             string
+	Url            string
+	Ports          cli.StringSlice
+	OsScan         bool
+	ServiceVersion bool
 }
 
 type Options struct {
@@ -30,7 +32,7 @@ var (
 	TargetCategory = "Target Config"
 )
 
-func init() {
+func InitApp() {
 	app := cli.NewApp()
 	app.Name = "CycleScan"
 	app.Version = "1.0"
@@ -63,7 +65,6 @@ func init() {
 		&cli.StringFlag{
 			Name:        "ip",
 			Usage:       "Target Ip",
-			Required:    true,
 			Category:    TargetCategory,
 			Destination: &Option.Ip,
 		},
@@ -80,9 +81,19 @@ func init() {
 			Category:    TargetCategory,
 			Destination: &Option.OsScan,
 		},
+		&cli.BoolFlag{
+			Name:        "sv",
+			Usage:       "Service Version Scan",
+			Value:       false,
+			Category:    TargetCategory,
+			Destination: &Option.ServiceVersion,
+		},
 	}
 
 	app.Action = func(c *cli.Context) error {
+		if c.String("ip") == "" && c.String("url") == "" {
+			return cli.Exit("NO ip Or Url Input!", -1)
+		}
 		return nil
 	}
 

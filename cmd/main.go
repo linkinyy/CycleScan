@@ -9,13 +9,15 @@ import (
 )
 
 func main() {
+	types.InitApp()
 	logger.InitLog()
 	target := host.Target{
 		Ip:    types.Option.Ip,
+		Url:   types.Option.Url,
 		Ports: make([]host.Port, 0, 10),
 		Os:    make([]string, 0, 3),
 	}
-	target.Scan(types.Option.Ports.Value())
+	target.Scan()
 	if !target.IsAlive() {
 		logger.Error("Target Is Not Alive")
 		logger.Error("Exit Scan!!!")
